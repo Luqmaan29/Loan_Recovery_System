@@ -81,32 +81,36 @@ This production-ready **Smart Digital Lending Recommendation System** leverages 
 
 ### Prerequisites
 - Python 3.13+
-- 8GB+ RAM (for full dataset processing)
 - Modern web browser
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/smart-lending-system.git
-cd smart-lending-system
+git clone https://github.com/Luqmaan29/Loan_Recovery_System.git
+cd Loan_Recovery_System
 
 # Create virtual environment
 python -m venv loan_system_env
 source loan_system_env/bin/activate  # On macOS/Linux
-# loan_system_env\Scripts\activate   # On Windows
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the system
-streamlit run dashboard.py
+# Step 1: Generate simple dataset
+python3 generate_simple_data.py
+
+# Step 2: Train models
+python3 simple_main.py
+
+# Step 3: Run dashboard
+streamlit run simple_dashboard.py
 ```
 
 ### Access the Platform
-- **Main Dashboard**: http://localhost:8501
-- **Customer Portal**: Real-time loan applications
-- **Bank Staff Dashboard**: Advanced analytics and risk management
+- **Dashboard**: http://localhost:8501
+- **Clean Interface**: Simple loan application form
+- **Instant Decisions**: AI-powered risk assessment
 
 ---
 
