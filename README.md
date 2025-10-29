@@ -26,13 +26,47 @@ A complete machine learning system that predicts loan defaults and provides inst
 ## 📊 Dataset
 
 **Simple, clean dataset with 7 essential features:**
-- `AGE` - Borrower age
-- `ANNUAL_INCOME` - Yearly income (₹)
-- `CREDIT_SCORE` - CIBIL score (300-900)
-- `LOAN_AMOUNT` - Requested amount (₹)
-- `YEARS_AT_JOB` - Employment stability
-- `EXISTING_LOANS` - Current loan count
-- `DEBT_TO_INCOME_RATIO` - Financial burden
+
+| Feature | Description | Calculation |
+|---------|-------------|-------------|
+| `AGE` | Borrower age in years | Direct input from application |
+| `ANNUAL_INCOME` | Yearly income (₹) | Total gross income before taxes |
+| `CREDIT_SCORE` | CIBIL score (300-900) | Calculated by credit bureau based on payment history, amounts owed, credit length, etc. |
+| `LOAN_AMOUNT` | Requested loan amount (₹) | Amount borrower wants to borrow |
+| `YEARS_AT_JOB` | Employment stability | Years employed at current job |
+| `EXISTING_LOANS` | Current loan count | Number of active loans (mortgage, car, personal, etc.) |
+| `DEBT_TO_INCOME_RATIO` | Financial burden | (Total Monthly Debt / Monthly Income) × 100 |
+
+### 📈 Key Calculated Features
+
+#### **1. Debt-to-Income Ratio (DTI)**
+**Formula:** `(Total Monthly Debt Payments / Gross Monthly Income) × 100%`
+
+**Example:**
+- Monthly debt: ₹15,000 (EMI + credit cards + other loans)
+- Monthly income: ₹50,000
+- DTI = (15,000 / 50,000) × 100 = **30%**
+
+**Risk Interpretation:**
+- DTI < 30%: Low risk ✅
+- DTI 30-50%: Moderate risk ⚠️
+- DTI > 50%: High risk ❌
+
+#### **2. Probability of Default (PD)**
+**What it is:** Likelihood (0-1 or 0-100%) that borrower will default on loan
+
+**How it's calculated:** Using Machine Learning models
+
+**Process:**
+1. Train models on historical data (features → actual outcomes)
+2. Models learn patterns (e.g., low income + high DTI = more defaults)
+3. Apply to new applicants to predict PD score
+
+**Example Predictions:**
+```
+Applicant A: PD = 0.15 (15%) → Low Risk → APPROVE
+Applicant B: PD = 0.65 (65%) → High Risk → REJECT
+```
 
 **Stats:**
 - Training samples: 5,000
@@ -114,14 +148,55 @@ Loan_System/
 | Logistic Regression | 96.4% | 94.4% |
 | **XGBoost** | **98.7%** | **95.6%** |
 
-**Feature Importance:**
-1. Employment stability (YEARS_AT_JOB) - 49%
-2. Debt-to-income ratio - 31%
-3. Annual income - 7%
-4. Credit score - 6%
-5. Loan amount - 2%
-6. Age - 2%
-7. Existing loans - 2%
+**Feature Importance (What matters most):**
+1. **Employment stability (YEARS_AT_JOB)** - 49%
+   - Long-term employment = lower risk
+   - Shows consistent income source
+2. **Debt-to-income ratio** - 31%
+   - Lower DTI = can afford more loans
+   - Shows financial burden level
+3. **Annual income** - 7%
+   - Higher income = lower default risk
+   - Shows repayment capacity
+4. **Credit score** - 6%
+   - Past payment behavior indicator
+   - Higher score = better history
+5. **Loan amount** - 2%
+   - Larger loans = higher risk
+   - Repayment burden consideration
+6. **Age** - 2%
+   - Age affects risk profile
+   - Too young/old = slightly riskier
+7. **Existing loans** - 2%
+   - More loans = more financial pressure
+
+---
+
+## 💡 Real-World Example
+
+**Scenario:** Rahul applies for ₹10 Lakh personal loan
+
+**His Profile:**
+- Age: 35 years
+- Annual Income: ₹6,00,000 (₹50,000/month)
+- Credit Score: 720 (Good)
+- Loan Amount: ₹10,00,000
+- Years at Job: 5 years (Stable)
+- Existing Loans: 1 (Car loan)
+- Monthly Debt Payments: ₹8,000
+- **DTI Ratio:** (8,000 / 50,000) × 100 = **16%**
+
+**ML Model Analysis:**
+- YEARS_AT_JOB (49% importance) = 5 years ✅ Low risk
+- DTI (31% importance) = 16% ✅ Low risk
+- ANNUAL_INCOME (7%) = ₹6L ✅ Good
+- CREDIT_SCORE (6%) = 720 ✅ Good
+
+**Model Prediction:**
+- PD Score: 0.12 (12% probability of default)
+- **Decision: APPROVED** ✅
+- Interest Rate: 11.5% p.a.
+- EMI: ₹21,456/month for 5 years
 
 ---
 
