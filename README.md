@@ -48,12 +48,7 @@ A complete machine learning system that predicts loan defaults and provides inst
 pip install -r requirements.txt
 ```
 
-### 2. Generate Dataset
-```bash
-python3 generate_simple_data.py
-```
-
-### 3. Train Models
+### 2. Train Models
 ```bash
 python3 simple_main.py
 ```
@@ -64,7 +59,7 @@ Logistic Regression: AUC 0.9638 (96.4%)
 XGBoost:           AUC 0.9868 (98.7%) ⭐
 ```
 
-### 4. Run Dashboard
+### 3. Run Dashboard
 ```bash
 streamlit run simple_dashboard.py
 ```
@@ -78,7 +73,6 @@ Open http://localhost:8501
 ```
 Loan_System/
 ├── README.md                    # This file
-├── generate_simple_data.py      # Generate dataset
 ├── simple_main.py               # Train models
 ├── simple_dashboard.py          # Interactive UI
 ├── requirements.txt             # Dependencies
@@ -86,8 +80,8 @@ Loan_System/
 │   ├── simple_data_loader.py   # Load data
 │   └── simple_model_trainer.py # Train models
 ├── data/
-│   ├── application_train_simple.csv
-│   └── application_test_simple.csv
+│   ├── application_train_simple.csv  # 5,000 samples
+│   └── application_test_simple.csv   # 1,000 samples
 └── models/
     └── simple_model.pkl         # Trained model
 ```
