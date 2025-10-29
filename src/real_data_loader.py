@@ -21,8 +21,15 @@ class RealDataLoader:
         
     def load_application_data(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Load application train and test data."""
-        train_path = os.path.join(self.data_path, "application_train.csv")
-        test_path = os.path.join(self.data_path, "application_test.csv")
+        # Try synthetic data first, fall back to original if not available
+        train_path = os.path.join(self.data_path, "application_train_synthetic.csv")
+        test_path = os.path.join(self.data_path, "application_test_synthetic.csv")
+        
+        # Fallback to original files
+        if not os.path.exists(train_path):
+            train_path = os.path.join(self.data_path, "application_train.csv")
+        if not os.path.exists(test_path):
+            test_path = os.path.join(self.data_path, "application_test.csv")
         
         print("📊 Loading application data...")
         
@@ -31,14 +38,14 @@ class RealDataLoader:
             train_df = pd.read_csv(train_path)
             print(f"  ✅ Training data: {train_df.shape}")
         else:
-            raise FileNotFoundError(f"Training data not found at {train_path}")
+            raise FileNotFoundError(f"Training data not found. Please run: python generate_synthetic_data.py")
         
         # Load test data
         if os.path.exists(test_path):
             test_df = pd.read_csv(test_path)
             print(f"  ✅ Test data: {test_df.shape}")
         else:
-            raise FileNotFoundError(f"Test data not found at {test_path}")
+            raise FileNotFoundError(f"Test data not found. Please run: python generate_synthetic_data.py")
         
         return train_df, test_df
     
