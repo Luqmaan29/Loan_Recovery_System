@@ -159,14 +159,55 @@ def main():
             import time
             time.sleep(1.5)
             
-            # Calculate decision
-            status, interest_rate, risk_score = calculate_loan_decision(
-                income, credit_score, years_job, existing_loans, age, loan_amount
-            )
+            # Try to load trained model
+            model, feature_names = load_model()
+            
+            if model is not None and feature_names is not None:
+                # Compute DTI consistent with training expectations
+                monthly_income = income / 12
+                estimated_existing_emi = existing_loans * 10000
+                dti = estimated_existing_emi / monthly_income if monthly_income > 0 else 1.0
+                
+                # Build single-row DataFrame in correct column order
+                features_dict = {
+                    'AGE': age,
+                    'ANNUAL_INCOME': income,
+                    'CREDIT_SCORE': credit_score,
+                    'LOAN_AMOUNT': loan_amount,
+                    'YEARS_AT_JOB': years_job,
+                    'EXISTING_LOANS': existing_loans,
+                    'DEBT_TO_INCOME_RATIO': dti,
+                }
+                X_input = pd.DataFrame([[features_dict[col] for col in feature_names]], columns=feature_names)
+                
+                # Probability of Default from trained model
+                pd_score = float(model.predict_proba(X_input)[0][1])
+                
+                # Map PD to decision
+                if pd_score < 0.30:
+                    status = "APPROVED"
+                    interest_rate = 10.5 if credit_score > 750 else 12.5
+                elif pd_score < 0.70:
+                    status = "REVIEW"
+                    interest_rate = 14.5
+                else:
+                    status = "NOT APPROVED"
+                    interest_rate = 0
+                
+                risk_score = pd_score  # for display consistency
+            else:
+                # Fallback to rule-based scoring if model file missing
+                status, interest_rate, risk_score = calculate_loan_decision(
+                    income, credit_score, years_job, existing_loans, age, loan_amount
+                )
             
             # Show result
             st.markdown("---")
             st.markdown("### 🎯 Your Loan Decision")
+            
+            # Show PD if model was used
+            if model is not None and feature_names is not None:
+                st.caption(f"Predicted Probability of Default (PD): {risk_score:.2%}")
             
             if status == "APPROVED":
                 st.success(f"## ✅ Congratulations! Your loan is APPROVED")
@@ -205,13 +246,13 @@ def main():
                 st.error("## ❌ Sorry, we cannot approve your loan at this time")
                 
                 st.markdown("### 💡 How to Improve:")
-                st.info("""
-                - Improve your credit score (pay bills on time)
-                - Maintain stable employment (2+ years)
-                - Reduce existing debt
-                - Consider a smaller loan amount
-                - Reapply in 6-12 months
-                """)
+                st.info(
+                    "- Improve your credit score (pay bills on time)\n"
+                    "- Maintain stable employment (2+ years)\n"
+                    "- Reduce existing debt\n"
+                    "- Consider a smaller loan amount\n"
+                    "- Reapply in 6-12 months"
+                )
     
     # Footer
     st.markdown("---")
